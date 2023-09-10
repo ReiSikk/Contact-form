@@ -2,134 +2,106 @@ let contactFormInfo = {
     name: "",
     email: "",
     message: ""
-}
+};
+
 const flags = {
     name: false,
     email: false,
     message: false,
     day: false
-}
-console.log("flags", flags);
+};
 
+const serviceID = "service_yohdays"
+const templateID = "template_6zpwgwj"
 
-
-
-
-//contact form info
+// Contact form info
 const contactForm = document.querySelector("form");
 const nameInput = document.querySelector("input[id=name]");
 const emailInput = document.querySelector("input[id=email]");
 const messageInput = document.querySelector("textarea");
+const submitBtn = document.querySelector("input[type=submit]");
 
-
-
-//disable button
-let submitBtn = document.querySelector("input[type=submit]")
-submitBtn.disabled = true;
-
-
-//function to check inputs
-
+// Function to check name
 function checkName(e) {
     console.log("Checking name");
-    const name = e.target.value;
-
-      // Use trim() to remove leading and trailing whitespace
-      const trimmedInput = name.trim();
-    
-
+    const name = nameInput.value.trim();
     const parts = name.split(' ');
-    if(parts.length >= 2 && parts[1].length > 1) {
-        let cleanedInput = trimmedInput.replace(/[.\s]+$/, '');
+    if (parts.length >= 2 && parts[1].length > 1) {
+        let cleanedInput = name.replace(/[.\s]+$/, '');
         cleanedInput = cleanedInput.replace(/\b\w/g, char => char.toUpperCase());
         contactFormInfo.name = cleanedInput;
         flags.name = true;
-        console.log("Correct name");
-        submitBtn.disabled = false;
     } else {
-        submitBtn.disabled = true;
         flags.name = false;
-        console.log("Incorrect name");
+    }
 }
 
-document.querySelector("input[id=name]").addEventListener("keyup", checkName);
-
+// Function to check email
 function checkEmail(e) {
     console.log("Checking email");
-    let email = e.target.value;
-    const trimmedInput = email.trim();
-    const cleanedInput = trimmedInput.replace(/[.\s]+$/, '');
-    const correctEmail = cleanedInput.includes("@cphbusiness.dk");
+    const email = emailInput.value.trim();
+    const correctEmail = email.includes("@cphbusiness.dk");
     if (correctEmail) {
-        console.log("Correct email");
-        e.target.style.border = "2px solid green";
-        email = cleanedInput;
+        emailInput.style.border = "2px solid green";
+        contactFormInfo.email = email;
         flags.email = true;
-        submitBtn.disabled = false;
     } else {
-        console.log("Incorrect email");
-        e.target.style.border = "2px solid red"; 
-        submitBtn.disabled = true;
+        emailInput.style.border = "2px solid red";
         flags.email = false;
     }
-
-    contactFormInfo.email = email;
-
 }
-document.querySelector("input[id=email]").addEventListener("keyup", checkEmail);
 
-
-
-function checkMessage() {
-    console.log("Checking message")
-    const message = document.querySelector("textarea").value;
-    console.log("Disabled", submitBtn);
+// Function to check message
+function checkMessage(e) {
+    console.log("Checking message");
+    const message = messageInput.value;
     if (message.length >= 8) {
         contactFormInfo.message = message;
-        submitBtn.disabled = false;
         flags.message = true;
-    }
-    if (message.length < 8) {
-        submitBtn.disabled = true;
+    } else {
         flags.message = false;
-
     }
 }
-document.querySelector("textarea").addEventListener("keyup", checkMessage);
 
-
-function checkDay() {
+// Function to check day
+function checkDay(e) {
     const currentDate = new Date();
     const currentDay = currentDate.getDay();
-    console.log("currentDay:" + " " + currentDay);
     if (currentDay === 5 || currentDay === 6 || currentDay === 0) {
-        alert("You can't submit the form on a weekend");
-        submitBtn.disabled = true;
         flags.day = false;
+        alert("Can't submit form on Fridays, Saturdays and Sundays");
     } else {
-        submitBtn.disabled = false;
         flags.day = true;
     }
 }
 
-
-document.querySelector("input[id=name]").addEventListener("keyup", checkName);
-document.querySelector("input[id=email]").addEventListener("keyup", checkEmail);
-document.querySelector("textarea").addEventListener("keyup", checkMessage);
-
+// Add event listeners
+nameInput.addEventListener("keyup", checkName);
+emailInput.addEventListener("keyup", checkEmail);
+messageInput.addEventListener("keyup", checkMessage);
 contactForm.addEventListener("submit", (e) => {
-    console.log("Submitting form", flags);
     e.preventDefault();
     checkName();
     checkEmail();
     checkMessage();
     checkDay();
 
-    if (flags.name === true && flags.email === true && flags.message === true && flags.day === true) {
+    if (flags.name && flags.email && flags.message && flags.day) {
         console.log("Submitting form");
+        emailjs.send(serviceID, templateID, contactFormInfo)
+        .then (
+            (res) => {
+                nameInput.value = "";
+                emailInput.value = "";
+                messageInput.value = "";
+                console.log(res);
+                alert("Form submitted successfully");
+            } 
+        )
+        .catch((err) => console.log(err));
+      
     } else {
-        contactForm.reset();
-console.log("Form not submitted", contactForm);
-return false;
+        alert("Please fill out the form correctly");
+        console.log("Form not submitted");
     }
-})};
+});

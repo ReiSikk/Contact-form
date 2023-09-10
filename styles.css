@@ -12,3 +12,6 @@ form {
     flex-direction: column;
     justify-content: center;
 }
+.input > input   {
+    min-width: 200px;
+}
