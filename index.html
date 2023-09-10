@@ -3,9 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
     <title>Document</title>
 </head>
 <body>
+    <main>
+        <div class="container">
+            <form action="mailto:cph-rs245@cphbusiness.dk">
+                <div class="input">
+                    <label for="name">Name</label>
+                    <input type="text" 
+                    id="name" 
+                    name="name" 
+                    required  
+                    minlength="2"
+                    placeholder="Your full name"
+                    autocapitalize="on"
+                    >
+                </div>
+                 <div class="input">
+                    <label for="email">Email</label>
+                    <input type="text" 
+                    id="email" 
+                    name="email" 
+                    title="The email has to be a cphbusiness email" required 
+                    placeholder="Your email.."
+                    >
+                 </div>
+
+                 <div class="input">
+                <label for="message">Message</label>
+                <textarea id="message" 
+                name="message" 
+                required 
+                placeholder="Write something.." 
+                minlength="8" 
+                style="height:200px" 
+                title="Your message should be at least 8 characters"
+                ></textarea>
+                </div>
+                <input type="submit" value="Send email">
+            </form>
+        </div>
+    </main>
     
 </body>
 <script src="script.js"></script>
